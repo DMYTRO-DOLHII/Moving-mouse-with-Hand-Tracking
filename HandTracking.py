@@ -17,13 +17,15 @@ class HandDetector:
     def findHands(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
-        # print(results.multi_hand_landmarks)
+        # print(self.results.multi_hand_landmarks)
 
         if self.results.multi_hand_landmarks:
             for handLms in self.results.multi_hand_landmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLms,
                                                self.mpHands.HAND_CONNECTIONS)
+
+        return img
 
     def findPosition(self, img, handNo=0, draw=True):
         lmList = []
@@ -41,36 +43,15 @@ class HandDetector:
         return lmList
 
     def run(self, wCam=1080, hCam=720):
+
+        detector = HandDetector()
+
         cap = cv2.VideoCapture(0)
         cap.set(3, wCam)
         cap.set(4, hCam)
 
         while True:
             success, img = cap.read()
+            detector.findHands(img)
             cv2.imshow("Image", img)
             cv2.waitKey(1)
-
-
-
-def main():
-    wCam, hCam = 1080, 720
-
-    cap = cv2.VideoCapture(0)
-    cap.set(4, hCam)
-    cap.set(3, wCam)
-
-    detector = HandDetector()
-
-    while True:
-        success, img = cap.read()
-        img = detector.findHands(img)
-        lmList = detector.findPosition(img)
-        if len(lmList) != 0:
-            print(lmList[4])
-
-        cv2.imshow("(-_-)", img)
-        cv2.waitKey(1)
-
-
-if __name__ == "__main__":
-    main()
