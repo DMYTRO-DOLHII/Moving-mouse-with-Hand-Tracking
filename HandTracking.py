@@ -40,6 +40,17 @@ class HandDetector:
 
         return lmList
 
+    def run(self, wCam=1080, hCam=720):
+        cap = cv2.VideoCapture(0)
+        cap.set(3, wCam)
+        cap.set(4, hCam)
+
+        while True:
+            success, img = cap.read()
+            cv2.imshow("Image", img)
+            cv2.waitKey(1)
+
+
 
 def main():
     wCam, hCam = 1080, 720
